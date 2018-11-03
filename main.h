@@ -4,3 +4,4 @@
 #define IDR_MNU_MAIN  2001
 #define IDM_ABOUT  6001
 #define IDR_ICO_MAIN  8001
+#define IDR_MNU_OPEN  6002

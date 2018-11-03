@@ -13,10 +13,16 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+#include <commdlg.h>
 #include <tchar.h>
+#include <string.h>
+#include <stdio.h>
 #include "main.h"
 
 #define NELEMS(a)  (sizeof(a) / sizeof((a)[0]))
+#define M_ROWS	50
+#define M_COLS	20
+#define BUFF_LEN	M_ROWS*M_COLS
 
 /** Prototypes **************************************************************/
 
@@ -26,9 +32,18 @@ static void Main_OnCommand(HWND, int, HWND, UINT);
 static void Main_OnDestroy(HWND);
 static LRESULT WINAPI AboutDlgProc(HWND, UINT, WPARAM, LPARAM);
 
+
+BOOL OpenBinFile(HWND);
+int ReadBinToBuf(void);
 /** Global variables ********************************************************/
 
 static HANDLE ghInstance;
+char filename[MAX_PATH];
+
+unsigned char buffer[BUFF_LEN];
+int countPart = 0;
+int currentPart = 0;
+
 
 /****************************************************************************
  *                                                                          *
@@ -79,7 +94,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     wc.hInstance = ghInstance;
     wc.hIcon = LoadIcon(ghInstance, MAKEINTRESOURCE(IDR_ICO_MAIN));
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOWTEXT + 1);
     wc.lpszMenuName = MAKEINTRESOURCE(IDR_MNU_MAIN);
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
@@ -176,13 +191,29 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 
 static void Main_OnPaint(HWND hwnd)
 {
-    PAINTSTRUCT ps;
-    RECT rc;
+	if ((buffer[0] == 0) && (buffer[1] == 0) && (buffer[2] == 0))
+	{
+		return;
+	}
 
-    BeginPaint(hwnd, &ps);
-    GetClientRect(hwnd, &rc);
-    DrawText(ps.hdc, _T("Hello, Windows!"), -1, &rc, DT_SINGLELINE|DT_CENTER|DT_VCENTER);
-    EndPaint(hwnd, &ps);
+	PAINTSTRUCT ps;
+	//RECT rc;
+
+	BeginPaint(hwnd, &ps);
+	SetBkColor(ps.hdc, RGB(0, 0, 0));
+	SetTextColor(ps.hdc, RGB(55, 78, 188));
+	TextOut(ps.hdc, 0, 15, "hello_world", 8);
+//BOOL TextOut(
+	//HDC hdc,           // handle to DC
+	//int nXStart,       // x-coordinate of starting position
+	//int nYStart,       // y-coordinate of starting position
+	//LPCTSTR lpString,  // character string
+	//int cbString       // number of characters
+//);
+
+	//GetClientRect(hwnd, &rc);
+	//DrawText(ps.hdc, _T("Hello, Windows!"), -1, &rc, DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+	EndPaint(hwnd, &ps);
 }
 
 /****************************************************************************
@@ -198,13 +229,22 @@ static void Main_OnPaint(HWND hwnd)
 
 static void Main_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-    switch (id)
-    {
-        case IDM_ABOUT:
-            DialogBox(ghInstance, MAKEINTRESOURCE(DLG_ABOUT), hwnd, (DLGPROC)AboutDlgProc);
+	switch (id)
+	{
+		case IDM_ABOUT:
+			DialogBox(ghInstance, MAKEINTRESOURCE(DLG_ABOUT), hwnd, (DLGPROC)AboutDlgProc);
+			return;
+		case IDR_MNU_OPEN:
+			if (OpenBinFile(hwnd) == FALSE)
+			{
+				return;
+			}
+			if (ReadBinToBuf() > 0)
+			MessageBoxA(hwnd, filename, "ddffd", 0);
+			break;
 
-        /* TODO: Enter more commands here */
-    }
+		/* TODO: Enter more commands here */
+	}
 }
 
 /****************************************************************************
@@ -261,4 +301,85 @@ static LRESULT CALLBACK AboutDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 
     return FALSE;
 }
+/*
 
+*/
+BOOL OpenBinFile(HWND hwnd)
+{
+	OPENFILENAME ofn;	// common dialog box structure
+	char szFile[MAX_PATH];	// buffer for file name
+	//HWND hwnd;              // owner window
+	//HANDLE hf;	// file handle
+
+	// Initialize OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFile = szFile;
+	//
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// use the contents of szFile to initialize itself.
+	//
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = "bin\0*.bin\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	// Display the Open dialog box. 
+
+	if (GetOpenFileName(&ofn) != TRUE)
+		return FALSE;
+
+	strcpy(filename, ofn.lpstrFile);
+	return TRUE;
+	//if (GetOpenFileName(&ofn)==TRUE) 
+	//hf = CreateFile(ofn.lpstrFile, GENERIC_READ,
+	//0, (LPSECURITY_ATTRIBUTES) NULL,
+	//OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
+	//(HANDLE) NULL);
+
+}
+
+int ReadBinToBuf(void)
+{
+ FILE * pFile = fopen(filename,"rb");
+  //if (pFile == NULL)
+  //{
+		//buffer[0] = 0;
+		//buffer[1] = 0;
+		//buffer[2] = 0;
+    //fclose(pFile);
+		//return 0;
+  //}
+	  // obtain file size:
+	
+  fseek(pFile , 0, SEEK_END);
+
+  long lSize = ftell(pFile);
+	//if ((int)lSize > BUFF_LEN) {
+		//fclose(pFile);
+		//return 0;
+	//}
+	int iSize = (int)lSize;
+  fseek(pFile , 0 , SEEK_SET);
+	countPart = iSize / 1000;
+
+	if (currentPart > countPart)
+		currentPart = 0;
+
+	currentPart++;
+	fseek(pFile , currentPart*BUFF_LEN , SEEK_SET);
+	size_t result;
+	result = fread(buffer,1,BUFF_LEN,pFile);
+	if (result != BUFF_LEN) {
+		fclose(pFile);
+		return 0;
+	}
+ 
+	fclose(pFile);
+  return 1;
+}
