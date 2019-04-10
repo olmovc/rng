@@ -1,8 +1,0 @@
-# depslib dependency file v1.0
-1544956320 source:d:\001\cdviewbinw01\main.c
-	<tchar.h>
-	<windows.h>
-	<commdlg.h>
-	<stdio.h>
-	<wincrypt.h>
-
