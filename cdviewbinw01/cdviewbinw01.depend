@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1554368978 source:d:\001\cdviewbinw01\main.c
+	<tchar.h>
+	<windows.h>
+	<commdlg.h>
+	<commctrl.h>
+	<stdio.h>
+	<stdlib.h>
+	<wincrypt.h>
+	<time.h>
+	"resource.h"
+
+1554714658 source:d:\001\cdviewbinw01\main.rc
+	<windows.h>
+	<commctrl.h>
+	"resource.h"
+
+1554714658 d:\001\cdviewbinw01\resource.h
+

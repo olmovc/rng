@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings version="1.0">
+	<category name="main.c">
+		<category name="Foldings">
+			<property name="Line1" type="integer">185</property>
+			<property name="Line2" type="integer">369</property>
+		</category>
+		<category name="Window">
+			<property name="Left" type="integer">-4</property>
+			<property name="Top" type="integer">-23</property>
+			<property name="Right" type="integer">849</property>
+			<property name="Bottom" type="integer">368</property>
+			<property name="Maximized" type="integer">1</property>
+			<property name="Active" type="integer">1</property>
+		</category>
+	</category>
+	<category name="main.rc">
+		<category name="Window">
+			<property name="Left" type="integer">44</property>
+			<property name="Top" type="integer">44</property>
+			<property name="Right" type="integer">775</property>
+			<property name="Bottom" type="integer">317</property>
+			<property name="Maximized" type="integer">0</property>
+			<property name="Active" type="integer">0</property>
+		</category>
+	</category>
+	<category name="main.h">
+		<category name="Window">
+			<property name="Left" type="integer">66</property>
+			<property name="Top" type="integer">66</property>
+			<property name="Right" type="integer">797</property>
+			<property name="Bottom" type="integer">339</property>
+			<property name="Maximized" type="integer">0</property>
+			<property name="Active" type="integer">0</property>
+		</category>
+	</category>
+</settings>
